@@ -1,4 +1,4 @@
-package com.zbank.account
+package com.zbank.bankaccount
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.loader.FixtureFactoryLoader
@@ -9,7 +9,7 @@ import org.springframework.test.context.ActiveProfiles
 abstract class AbstractBaseTest {
 
     init {
-        FixtureFactoryLoader.loadTemplates("com.zbank.account.template");
+        FixtureFactoryLoader.loadTemplates("com.zbank.bankaccount.template");
     }
 
     inline fun <reified T : Any> buildFixture(label: String): T {

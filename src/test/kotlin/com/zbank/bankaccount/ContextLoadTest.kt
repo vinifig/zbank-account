@@ -1,4 +1,4 @@
-package com.zbank.account
+package com.zbank.bankaccount
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest

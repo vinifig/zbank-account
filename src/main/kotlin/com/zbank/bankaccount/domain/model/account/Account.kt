@@ -1,4 +1,4 @@
-package com.zbank.account.domain.model.account
+package com.zbank.bankaccount.domain.model.account
 
 import org.hibernate.validator.constraints.br.CPF
 import org.springframework.data.annotation.Id

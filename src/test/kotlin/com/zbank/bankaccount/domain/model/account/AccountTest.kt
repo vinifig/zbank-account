@@ -1,6 +1,6 @@
-package com.zbank.account.domain.model.account
+package com.zbank.bankaccount.domain.model.account
 
-import com.zbank.account.AbstractBaseTest
+import com.zbank.bankaccount.AbstractBaseTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

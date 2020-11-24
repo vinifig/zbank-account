@@ -1,10 +1,9 @@
-package com.zbank.account.template
+package com.zbank.bankaccount.template
 
 import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.six2six.fixturefactory.loader.TemplateLoader
-import com.zbank.account.domain.model.account.Account
-import java.util.*
+import com.zbank.bankaccount.domain.model.account.Account
 
 class AccountTemplate : TemplateLoader {
     override fun load() {

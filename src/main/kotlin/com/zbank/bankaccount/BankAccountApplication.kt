@@ -1,4 +1,4 @@
-package com.zbank.account
+package com.zbank.bankaccount
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
