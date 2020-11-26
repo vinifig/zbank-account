@@ -2,6 +2,7 @@ package com.zbank.bankaccount.port.controller.handler
 
 import com.fasterxml.jackson.module.kotlin.MissingKotlinParameterException
 import com.zbank.bankaccount.domain.model.common.BusinessException
+import com.zbank.bankaccount.domain.model.common.EntityNotFoundException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -19,6 +20,13 @@ class ControllerExceptionHandler : ResponseEntityExceptionHandler() {
         val errorBody = ErrorBody(ex.message, listOf())
 
         return handleExceptionInternal(ex, errorBody, HttpHeaders.EMPTY, HttpStatus.UNPROCESSABLE_ENTITY, request)
+    }
+
+    @ExceptionHandler(EntityNotFoundException::class)
+    fun handleAccountAlreadyExists(ex: EntityNotFoundException, request: WebRequest): ResponseEntity<Any> {
+        val errorBody = ErrorBody(ex.message, listOf())
+
+        return handleExceptionInternal(ex, errorBody, HttpHeaders.EMPTY, HttpStatus.NOT_FOUND, request)
     }
 
     override fun handleHttpMessageNotReadable(
