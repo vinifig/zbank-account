@@ -2,7 +2,7 @@ package com.zbank.bankaccount.port.controller
 
 import com.zbank.bankaccount.application.AccountApplicationService
 import com.zbank.bankaccount.application.command.CreateAccountCommand
-import com.zbank.bankaccount.domain.model.account.Account
+import com.zbank.bankaccount.application.data.AccountData
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,7 +17,7 @@ class AccountController(
 ) {
 
     @PostMapping
-    fun createAccount(@RequestBody accountCommand: CreateAccountCommand): ResponseEntity<Account> {
+    fun createAccount(@RequestBody accountCommand: CreateAccountCommand): ResponseEntity<AccountData> {
         val account = accountApplicationService.createAccount(accountCommand)
 
         return ResponseEntity(account, HttpStatus.CREATED)

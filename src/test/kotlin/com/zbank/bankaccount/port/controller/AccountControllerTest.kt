@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.zbank.bankaccount.AbstractBaseTest
 import com.zbank.bankaccount.application.AccountApplicationService
 import com.zbank.bankaccount.application.command.CreateAccountCommand
-import com.zbank.bankaccount.domain.model.account.Account
+import com.zbank.bankaccount.application.data.AccountData
+import com.zbank.bankaccount.domain.model.account.AccountAlreadyExistsException
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
@@ -29,8 +30,7 @@ class AccountControllerTest(
     @Test
     fun `post account must return created when the cpf is available`() {
         val accountCommand = buildFixture<CreateAccountCommand>("default")
-        val expectedAccount = buildFixture<Account>("zeroBalance").copy(
-            name = accountCommand.name,
+        val expectedAccount = buildFixture<AccountData>("default").copy(
             cpf = accountCommand.cpf
         )
 
@@ -42,8 +42,22 @@ class AccountControllerTest(
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id", equalTo(expectedAccount.id?.toInt())))
-            .andExpect(jsonPath("$.name", equalTo(expectedAccount.name)))
             .andExpect(jsonPath("$.cpf", equalTo(expectedAccount.cpf)))
-            .andExpect(jsonPath("$.balance", equalTo(expectedAccount.balance)))
+    }
+
+    @Test
+    fun `post account must return unprocessable entity when the cpf is unavailable`() {
+        val accountCommand = buildFixture<CreateAccountCommand>("default")
+        val exception = AccountAlreadyExistsException(accountCommand.cpf)
+
+        `when`(accountApplicationServiceMock.createAccount(accountCommand)).thenThrow(exception)
+
+        val accountCommandContent = objectMapper.writeValueAsString(accountCommand)
+        mockMvc.perform(post("/accounts")
+            .content(accountCommandContent)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isUnprocessableEntity)
+            .andExpect(jsonPath("$.status", equalTo(422)))
+            .andExpect(jsonPath("$.message", equalTo(exception.message)))
     }
 }
