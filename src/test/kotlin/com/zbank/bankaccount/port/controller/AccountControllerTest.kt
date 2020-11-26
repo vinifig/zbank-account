@@ -4,17 +4,22 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.zbank.bankaccount.AbstractBaseTest
 import com.zbank.bankaccount.application.AccountApplicationService
 import com.zbank.bankaccount.application.command.CreateAccountCommand
+import com.zbank.bankaccount.application.data.AccountBalanceData
 import com.zbank.bankaccount.application.data.AccountData
+import com.zbank.bankaccount.domain.model.account.Account
 import com.zbank.bankaccount.domain.model.account.AccountAlreadyExistsException
+import com.zbank.bankaccount.domain.model.account.AccountNotFoundException
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 import org.mockito.Mockito.`when`
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -57,7 +62,33 @@ class AccountControllerTest(
             .content(accountCommandContent)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isUnprocessableEntity)
-            .andExpect(jsonPath("$.status", equalTo(422)))
+            .andExpect(jsonPath("$.status", equalTo(HttpStatus.UNPROCESSABLE_ENTITY.value())))
+            .andExpect(jsonPath("$.message", equalTo(exception.message)))
+    }
+
+    @Test
+    fun `get balance must return ok if the id exists`() {
+        val account = buildFixture<AccountBalanceData>("default")
+
+        `when`(accountApplicationServiceMock.getBalance(account.id)).thenReturn(account)
+
+        mockMvc.perform(get("/accounts/${account.id}/balance"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id", equalTo(account.id.toInt())))
+            .andExpect(jsonPath("$.balance", equalTo(account.balance)))
+    }
+
+    @Test
+    fun `get balance must return not found if the id not exists`() {
+        val account = buildFixture<Account>("default")
+        val accountId = account.id ?: fail("must have a account id")
+        val exception = AccountNotFoundException(accountId)
+
+        `when`(accountApplicationServiceMock.getBalance(accountId)).thenThrow(exception)
+
+        mockMvc.perform(get("/accounts/$accountId/balance"))
+            .andExpect(status().isNotFound)
+            .andExpect(jsonPath("$.status", equalTo(HttpStatus.NOT_FOUND.value())))
             .andExpect(jsonPath("$.message", equalTo(exception.message)))
     }
 }
