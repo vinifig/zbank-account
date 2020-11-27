@@ -46,7 +46,7 @@ class AccountControllerTest(
             .content(accountCommandContent)
             .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated)
-            .andExpect(jsonPath("$.id", equalTo(expectedAccount.id?.toInt())))
+            .andExpect(jsonPath("$.id", equalTo(expectedAccount.id.toInt())))
             .andExpect(jsonPath("$.cpf", equalTo(expectedAccount.cpf)))
     }
 
