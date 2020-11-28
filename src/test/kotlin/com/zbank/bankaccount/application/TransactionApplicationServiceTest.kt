@@ -5,7 +5,6 @@ import com.zbank.bankaccount.domain.model.account.Account
 import com.zbank.bankaccount.domain.model.account.AccountNotFoundException
 import com.zbank.bankaccount.domain.model.account.AccountRepository
 import com.zbank.bankaccount.domain.model.transaction.Transaction
-import com.zbank.bankaccount.domain.model.transaction.TransactionKind
 import com.zbank.bankaccount.domain.model.transaction.TransactionKind.*
 import com.zbank.bankaccount.domain.model.transaction.TransactionRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -103,6 +102,67 @@ class TransactionApplicationServiceTest(
 
         verify(accountRepositoryMock).findById(accountId)
         verify(accountRepositoryMock).save(any(Account::class.java))
+        verify(transactionRepositoryMock).save(any(Transaction::class.java))
+    }
+
+    @Test
+    fun `#transfer must throw a AccountNotFoundException if the account_id does not exists` () {
+        val invalidAccountId = -1L
+        val destinyAccount = buildFixture<Account>("default")
+        val accountIds = listOf(invalidAccountId, destinyAccount.id!!)
+        val accounts = listOf(destinyAccount)
+
+        `when`(accountRepositoryMock.findAllById(accountIds)).thenReturn(accounts)
+
+        assertThrows<AccountNotFoundException> {
+            transactionApplicationService.transfer(invalidAccountId, destinyAccount.id!!, 0f)
+        }
+
+        verify(accountRepositoryMock).findAllById(accountIds)
+        verify(accountRepositoryMock, never()).save(any(Account::class.java))
+        verify(transactionRepositoryMock, never()).save(any(Transaction::class.java))
+    }
+
+    @Test
+    fun `#transfer must throw a AccountNotFoundException if the destiny_account_id does not exists` () {
+        val originAccount = buildFixture<Account>("default")
+        val invalidAccountId = -1L
+        val accountIds = listOf(originAccount.id!!, invalidAccountId)
+        val accounts = listOf(originAccount)
+
+        `when`(accountRepositoryMock.findAllById(accountIds)).thenReturn(accounts)
+
+        assertThrows<AccountNotFoundException> {
+            transactionApplicationService.transfer(originAccount.id!!, invalidAccountId, 0f)
+        }
+
+        verify(accountRepositoryMock).findAllById(accountIds)
+        verify(accountRepositoryMock, never()).save(any(Account::class.java))
+        verify(transactionRepositoryMock, never()).save(any(Transaction::class.java))
+    }
+
+    @Test
+    fun `#transfer must return a Transaction with valid values`() {
+        val originAccount = buildFixture<Account>("default")
+        val destinyAccount = buildFixture<Account>("default")
+        val accountIds = listOf(originAccount.id!!, destinyAccount.id!!)
+        val accounts = listOf(originAccount, destinyAccount)
+        val amount = 5f
+
+        `when`(accountRepositoryMock.findAllById(accountIds)).thenReturn(accounts)
+        `when`(accountRepositoryMock.save(any(Account::class.java))).then { it.arguments.first() }
+        `when`(transactionRepositoryMock.save(any(Transaction::class.java))).then { it.arguments.first() }
+
+        val transaction = transactionApplicationService.transfer(originAccount.id!!, destinyAccount.id!!, amount)
+
+        assertThat(transaction.amount).isEqualTo(amount)
+        assertThat(transaction.extraAmount).isEqualTo(0f)
+        assertThat(transaction.originAccountId).isEqualTo(originAccount.id!!)
+        assertThat(transaction.destinyAccountId).isEqualTo(destinyAccount.id!!)
+        assertThat(transaction.kind).isEqualTo(TRANSFER)
+
+        verify(accountRepositoryMock).findAllById(accountIds)
+        verify(accountRepositoryMock, atLeast(2)).save(any(Account::class.java))
         verify(transactionRepositoryMock).save(any(Transaction::class.java))
     }
 }
