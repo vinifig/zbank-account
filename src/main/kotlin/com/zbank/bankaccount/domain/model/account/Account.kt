@@ -2,7 +2,9 @@ package com.zbank.bankaccount.domain.model.account
 
 import org.hibernate.validator.constraints.br.CPF
 import org.springframework.data.annotation.Id
+import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.relational.core.mapping.Table
+import java.time.OffsetDateTime
 
 @Table("account")
 data class Account(
@@ -15,7 +17,12 @@ data class Account(
     @CPF
     val cpf: String,
 
-    val balance: Float = 0f
+    val balance: Float = 0f,
+
+    val createdAt: OffsetDateTime = OffsetDateTime.now(),
+
+    @LastModifiedDate
+    val updatedAt: OffsetDateTime = OffsetDateTime.now()
 
 ) {
 
