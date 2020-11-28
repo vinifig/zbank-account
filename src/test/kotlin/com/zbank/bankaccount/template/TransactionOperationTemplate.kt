@@ -11,7 +11,7 @@ class TransactionOperationTemplate : TemplateLoader {
     override fun load() {
         Fixture.of(TransactionOperation::class.java)
             .addTemplate("default", Rule().apply {
-                add("amount", uniqueRandom(*(1..999).map { it.toDouble() }.toTypedArray()))
+                add("amount", uniqueRandom(*(1..999).map { it.toFloat() }.toTypedArray()))
                 add("kind", TransactionKind.WITHDRAW)
                 add("targetAccountId", uniqueRandom(*(1L..999L).toList().toTypedArray()))
             })

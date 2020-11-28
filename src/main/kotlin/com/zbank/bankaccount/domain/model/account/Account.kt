@@ -15,11 +15,11 @@ data class Account(
     @CPF
     val cpf: String,
 
-    val balance: Double = 0.0
+    val balance: Float = 0f
 
 ) {
 
-    fun withdraw(amount: Double): Account {
+    fun withdraw(amount: Float): Account {
         if (amount < 0) {
             throw NegativeAmountException()
         }
@@ -30,7 +30,7 @@ data class Account(
         return this.copy(balance = balance - amount)
     }
 
-    fun deposit(amount: Double): Account {
+    fun deposit(amount: Float): Account {
         if (amount < 0) {
             throw NegativeAmountException()
         }

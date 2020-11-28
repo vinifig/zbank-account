@@ -22,11 +22,14 @@ class TransactionController(
     fun executeTransaction(
         @PathVariable accountId: Long,
         @RequestBody transaction: TransactionOperation
-    ) : ResponseEntity<Transaction> {
+    ): ResponseEntity<Transaction> {
         val transaction = when(transaction.kind) {
-            WITHDRAW -> transactionApplicationService.withdraw(accountId, transaction.amount)
-            DEPOSIT -> transactionApplicationService.deposit(accountId, transaction.amount)
-            TRANSFER -> throw NotImplementedError()
+            WITHDRAW ->
+                transactionApplicationService.withdraw(accountId, transaction.amount)
+            DEPOSIT ->
+                transactionApplicationService.deposit(accountId, transaction.amount)
+            TRANSFER ->
+                transactionApplicationService.transfer(accountId, transaction.targetAccountId!!, transaction.amount)
         }
 
         return ResponseEntity(transaction, HttpStatus.CREATED)

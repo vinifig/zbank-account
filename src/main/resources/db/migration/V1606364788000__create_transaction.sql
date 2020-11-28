@@ -3,8 +3,8 @@ CREATE TABLE "transaction"(
     origin_account_id bigint,
     destiny_account_id bigint,
     kind VARCHAR(10),
-    amount DOUBLE PRECISION,
-    extra_amount DOUBLE PRECISION,
+    amount FLOAT(3),
+    extra_amount FLOAT(3),
     created_at TIMESTAMP WITH TIME ZONE,
 
     FOREIGN KEY (origin_account_id) REFERENCES account (id),

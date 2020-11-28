@@ -12,7 +12,7 @@ class AccountTemplate : TemplateLoader {
                 add("id", uniqueRandom(*(1L..999L).toList().toTypedArray()))
                 add("name", regex("\\w{10}"))
                 add("cpf", "012.345.678-90")
-                add("balance", uniqueRandom(*(1..999).map { it.toDouble() }.toTypedArray()))
+                add("balance", uniqueRandom(*(1..999).map { it.toFloat() }.toTypedArray()))
             })
             .addTemplate("zeroBalance").inherits("default", Rule().apply {
                 add("balance", 0.0)

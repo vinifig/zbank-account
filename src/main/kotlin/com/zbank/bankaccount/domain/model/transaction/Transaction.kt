@@ -17,16 +17,16 @@ data class Transaction(
 
     val kind: TransactionKind,
 
-    val amount: Double,
+    val amount: Float,
 
-    val extraAmount: Double = 0.0,
+    val extraAmount: Float = 0f,
 
     val createdAt: OffsetDateTime = OffsetDateTime.now()
 
 ) {
     companion object {
 
-        fun deposit(accountId: Long, amount: Double, extraAmount: Double) = Transaction(
+        fun deposit(accountId: Long, amount: Float, extraAmount: Float) = Transaction(
             null,
             accountId,
             null,
@@ -35,13 +35,21 @@ data class Transaction(
             extraAmount
         )
 
-        fun withdraw(accountId: Long, amount: Double, extraAmount: Double) = Transaction(
+        fun withdraw(accountId: Long, amount: Float, extraAmount: Float) = Transaction(
             null,
             accountId,
             null,
             WITHDRAW,
             -amount,
             -extraAmount
+        )
+
+        fun transfer(originAccountId: Long, destinyAccountId: Long, amount: Float) = Transaction(
+            null,
+            originAccountId,
+            destinyAccountId,
+            DEPOSIT,
+            amount
         )
 
     }

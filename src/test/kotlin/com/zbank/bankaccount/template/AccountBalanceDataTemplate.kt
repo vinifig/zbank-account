@@ -12,7 +12,7 @@ class AccountBalanceDataTemplate : TemplateLoader {
         Fixture.of(AccountBalanceData::class.java)
             .addTemplate("default", Rule().apply {
                 add("id", uniqueRandom(*(1L..999L).toList().toTypedArray()))
-                add("balance", uniqueRandom(*(1..999).map { it.toDouble() }.toTypedArray()))
+                add("balance", uniqueRandom(*(1..999).map { it.toFloat() }.toTypedArray()))
             })
     }
 
