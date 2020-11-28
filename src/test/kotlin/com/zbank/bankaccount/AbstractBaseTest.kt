@@ -16,6 +16,10 @@ abstract class AbstractBaseTest {
         return Fixture.from(T::class.java).gimme(label)
     }
 
+    inline fun <reified T : Any> buildFixture(quantity: Int, label: String): List<T> {
+        return Fixture.from(T::class.java).gimme(quantity, label)
+    }
+
     fun <T> any(type: Class<T>): T = Mockito.any<T>(type)
 
 }

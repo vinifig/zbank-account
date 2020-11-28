@@ -48,7 +48,7 @@ data class Transaction(
             null,
             originAccountId,
             destinyAccountId,
-            DEPOSIT,
+            TRANSFER,
             amount
         )
 

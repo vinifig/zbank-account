@@ -19,7 +19,7 @@ import java.util.*
 @Configuration
 @EnableJdbcRepositories(basePackageClasses = [AccountApplication::class])
 @EnableJdbcAuditing(dateTimeProviderRef = "auditingDateTimeProvider")
-class JdbcConfig : AbstractJdbcConfiguration() {
+class DBConfig : AbstractJdbcConfiguration() {
 
     override fun jdbcCustomConversions(): JdbcCustomConversions {
         return JdbcCustomConversions(listOf(

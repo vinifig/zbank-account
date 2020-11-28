@@ -1,6 +1,7 @@
 package com.zbank.bankaccount.application
 
 import com.zbank.bankaccount.AbstractBaseTest
+import com.zbank.bankaccount.application.data.AccountStatementData
 import com.zbank.bankaccount.domain.model.account.Account
 import com.zbank.bankaccount.domain.model.account.AccountNotFoundException
 import com.zbank.bankaccount.domain.model.account.AccountRepository
@@ -13,9 +14,12 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import java.util.*
 
 @ExtendWith(MockitoExtension::class)
@@ -28,6 +32,8 @@ class TransactionApplicationServiceTest(
         accountRepositoryMock,
         transactionRepositoryMock
     )
+
+    private val defaultPageable = PageRequest.of(0, 20)
 
     @Test
     fun `#deposit must throw a AccountNotFoundException if the account_id does not exists` () {
@@ -164,5 +170,64 @@ class TransactionApplicationServiceTest(
         verify(accountRepositoryMock).findAllById(accountIds)
         verify(accountRepositoryMock, atLeast(2)).save(any(Account::class.java))
         verify(transactionRepositoryMock).save(any(Transaction::class.java))
+    }
+
+    @Test
+    fun `#getAccountStatement must throw AccountNotFoundException when the account_id does not exists`() {
+        val invalidAccountId = -1L
+
+        `when`(accountRepositoryMock.existsById(invalidAccountId)).thenReturn(false)
+
+        assertThrows<AccountNotFoundException> {
+            transactionApplicationService.getAccountStatement(invalidAccountId, defaultPageable)
+        }
+
+        verify(accountRepositoryMock).existsById(invalidAccountId)
+        verify(transactionRepositoryMock, never())
+            .findAllByOriginAccountIdOrDestinyAccountId(anyLong(), anyLong(), any(Pageable::class.java))
+    }
+
+    @Test
+    fun `#getAccountStatement must return a page with all results`() {
+        val account = buildFixture<Account>("default")
+        val transactions = buildFixture<Transaction>(2, "default")
+        val expectedStatements = transactions.map { AccountStatementData.from(account.id!!, it) }
+
+        `when`(accountRepositoryMock.existsById(account.id!!)).thenReturn(true)
+        `when`(transactionRepositoryMock.findAllByOriginAccountIdOrDestinyAccountId(
+                account.id!!,
+                account.id!!,
+                defaultPageable
+            )).thenReturn(transactions)
+
+        val statements = transactionApplicationService.getAccountStatement(account.id!!, defaultPageable)
+
+        assertThat(statements.content.toList()).isEqualTo(expectedStatements)
+
+        verify(accountRepositoryMock).existsById(account.id!!)
+        verify(transactionRepositoryMock)
+            .findAllByOriginAccountIdOrDestinyAccountId(account.id!!, account.id!!, defaultPageable)
+    }
+
+    @Test
+    fun `#getAccountStatement must return a empty page if has no results`() {
+        val account = buildFixture<Account>("default")
+        val transactions = listOf<Transaction>()
+        val expectedStatements = listOf<AccountStatementData>()
+
+        `when`(accountRepositoryMock.existsById(account.id!!)).thenReturn(true)
+        `when`(transactionRepositoryMock.findAllByOriginAccountIdOrDestinyAccountId(
+            account.id!!,
+            account.id!!,
+            defaultPageable
+        )).thenReturn(transactions)
+
+        val statements = transactionApplicationService.getAccountStatement(account.id!!, defaultPageable)
+
+        assertThat(statements.content.toList()).isEqualTo(expectedStatements)
+
+        verify(accountRepositoryMock).existsById(account.id!!)
+        verify(transactionRepositoryMock)
+            .findAllByOriginAccountIdOrDestinyAccountId(account.id!!, account.id!!, defaultPageable)
     }
 }
