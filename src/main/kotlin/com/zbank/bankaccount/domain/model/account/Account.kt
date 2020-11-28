@@ -3,6 +3,7 @@ package com.zbank.bankaccount.domain.model.account
 import org.hibernate.validator.constraints.br.CPF
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.domain.AbstractAggregateRoot
 import org.springframework.data.relational.core.mapping.Table
 import java.time.OffsetDateTime
 
@@ -24,7 +25,7 @@ data class Account(
     @LastModifiedDate
     val updatedAt: OffsetDateTime = OffsetDateTime.now()
 
-) {
+) : AbstractAggregateRoot<Account>() {
 
     fun withdraw(amount: Float): Account {
         if (amount < 0) {

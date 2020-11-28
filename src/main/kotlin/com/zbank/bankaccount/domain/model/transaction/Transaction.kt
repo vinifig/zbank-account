@@ -2,6 +2,7 @@ package com.zbank.bankaccount.domain.model.transaction
 
 import com.zbank.bankaccount.domain.model.transaction.TransactionKind.*
 import org.springframework.data.annotation.Id
+import org.springframework.data.domain.AbstractAggregateRoot
 import org.springframework.data.relational.core.mapping.Table
 import java.time.OffsetDateTime
 
@@ -23,7 +24,7 @@ data class Transaction(
 
     val createdAt: OffsetDateTime = OffsetDateTime.now()
 
-) {
+) : AbstractAggregateRoot<Transaction>() {
     companion object {
 
         fun deposit(accountId: Long, amount: Float, extraAmount: Float) = Transaction(
