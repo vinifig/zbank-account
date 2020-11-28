@@ -10,7 +10,7 @@ class AccountTest : AbstractBaseTest() {
     @Test
     fun `#withdraw must throw a NoBalanceAvailableException if has no balance available`() {
         val account = buildFixture<Account>("zeroBalance")
-        val amountToWithdraw = 1.0
+        val amountToWithdraw = 1.0f
 
         assertThrows<NoBalanceAvailableException> {
             account.withdraw(amountToWithdraw)
@@ -20,7 +20,7 @@ class AccountTest : AbstractBaseTest() {
     @Test
     fun `#withdraw must throw a NegativeAmountException if the amount is negative`() {
         val account = buildFixture<Account>("default")
-        val amountToWithdraw = -1.0
+        val amountToWithdraw = -1.0f
 
         assertThrows<NegativeAmountException> {
             account.withdraw(amountToWithdraw)
@@ -40,7 +40,7 @@ class AccountTest : AbstractBaseTest() {
     @Test
     fun `#deposit must add the amount to account balance`() {
         val account = buildFixture<Account>("default")
-        val amountToDeposit = 10.0
+        val amountToDeposit = 10.0f
 
         val updatedAccount = account.deposit(amountToDeposit)
 
@@ -50,7 +50,7 @@ class AccountTest : AbstractBaseTest() {
     @Test
     fun `#deposit must throw a NegativeAmountException if the amount is negative`() {
         val account = buildFixture<Account>("default")
-        val amountToDeposit = -1.0
+        val amountToDeposit = -1.0f
 
         assertThrows<NegativeAmountException> {
             account.deposit(amountToDeposit)

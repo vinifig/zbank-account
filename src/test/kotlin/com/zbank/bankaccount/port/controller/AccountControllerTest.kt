@@ -75,7 +75,7 @@ class AccountControllerTest(
         mockMvc.perform(get("/accounts/${account.id}/balance"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id", equalTo(account.id.toInt())))
-            .andExpect(jsonPath("$.balance", equalTo(account.balance)))
+            .andExpect(jsonPath("$.balance", equalTo(account.balance.toDouble())))
     }
 
     @Test

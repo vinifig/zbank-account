@@ -37,7 +37,7 @@ class TransactionApplicationServiceTest(
         `when`(accountRepositoryMock.findById(invalidAccountId)).thenReturn(Optional.empty())
 
         assertThrows<AccountNotFoundException> {
-            transactionApplicationService.deposit(invalidAccountId, 0.0)
+            transactionApplicationService.deposit(invalidAccountId, 0.0f)
         }
 
         verify(accountRepositoryMock).findById(invalidAccountId)
@@ -49,7 +49,7 @@ class TransactionApplicationServiceTest(
     fun `#deposit must return a Transaction with valid values`() {
         val account = buildFixture<Account>("default")
         val accountId = account.id ?: fail("must have a id")
-        val amount = 5.0
+        val amount = 5.0f
 
         `when`(accountRepositoryMock.findById(accountId)).thenReturn(Optional.of(account))
         `when`(accountRepositoryMock.save(any(Account::class.java))).then { it.arguments.first() }
@@ -75,7 +75,7 @@ class TransactionApplicationServiceTest(
         `when`(accountRepositoryMock.findById(invalidAccountId)).thenReturn(Optional.empty())
 
         assertThrows<AccountNotFoundException> {
-            transactionApplicationService.withdraw(invalidAccountId, 0.0)
+            transactionApplicationService.withdraw(invalidAccountId, 0f)
         }
 
         verify(accountRepositoryMock).findById(invalidAccountId)
@@ -87,7 +87,7 @@ class TransactionApplicationServiceTest(
     fun `#withdraw must return a Transaction with valid values`() {
         val account = buildFixture<Account>("default")
         val accountId = account.id ?: fail("must have a id")
-        val amount = 5.0
+        val amount = 5.0f
 
         `when`(accountRepositoryMock.findById(accountId)).thenReturn(Optional.of(account))
         `when`(accountRepositoryMock.save(any(Account::class.java))).then { it.arguments.first() }

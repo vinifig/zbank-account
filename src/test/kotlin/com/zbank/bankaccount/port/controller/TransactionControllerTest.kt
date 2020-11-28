@@ -153,8 +153,8 @@ class TransactionControllerTest(
             .andExpect(jsonPath("$.origin_account_id", equalTo(transaction.originAccountId.toInt())))
             .andExpect(jsonPath("$.destiny_account_id", equalTo(transaction.destinyAccountId?.toInt())))
             .andExpect(jsonPath("$.kind", equalTo(transaction.kind.toString())))
-            .andExpect(jsonPath("$.amount", equalTo(transaction.amount)))
-            .andExpect(jsonPath("$.extra_amount", equalTo(transaction.extraAmount)))
+            .andExpect(jsonPath("$.amount", equalTo(transaction.amount.toDouble())))
+            .andExpect(jsonPath("$.extra_amount", equalTo(transaction.extraAmount.toDouble())))
 
         verify(transactionApplicationServiceMock).withdraw(accountId, operation.amount)
         verify(transactionApplicationServiceMock, never()).deposit(accountId, operation.amount)
@@ -178,8 +178,8 @@ class TransactionControllerTest(
             .andExpect(jsonPath("$.origin_account_id", equalTo(transaction.originAccountId.toInt())))
             .andExpect(jsonPath("$.destiny_account_id", equalTo(transaction.destinyAccountId?.toInt())))
             .andExpect(jsonPath("$.kind", equalTo(transaction.kind.toString())))
-            .andExpect(jsonPath("$.amount", equalTo(transaction.amount)))
-            .andExpect(jsonPath("$.extra_amount", equalTo(transaction.extraAmount)))
+            .andExpect(jsonPath("$.amount", equalTo(transaction.amount.toDouble())))
+            .andExpect(jsonPath("$.extra_amount", equalTo(transaction.extraAmount.toDouble())))
 
         verify(transactionApplicationServiceMock, never()).withdraw(accountId, operation.amount)
         verify(transactionApplicationServiceMock).deposit(accountId, operation.amount)

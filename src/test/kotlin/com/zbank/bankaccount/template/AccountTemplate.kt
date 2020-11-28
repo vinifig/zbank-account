@@ -15,7 +15,7 @@ class AccountTemplate : TemplateLoader {
                 add("balance", uniqueRandom(*(1..999).map { it.toFloat() }.toTypedArray()))
             })
             .addTemplate("zeroBalance").inherits("default", Rule().apply {
-                add("balance", 0.0)
+                add("balance", 0f)
             })
     }
 }
