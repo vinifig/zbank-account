@@ -25,15 +25,15 @@ class TransactionController(
     @PreAuthorize(ACCOUNT_ID_AUTHORIZATION_EXPRESSION)
     fun executeTransaction(
         @PathVariable accountId: Long,
-        @RequestBody transaction: TransactionOperation
+        @RequestBody operation: TransactionOperation
     ): ResponseEntity<Transaction> {
-        val transaction = when(transaction.kind) {
+        val transaction = when(operation.kind) {
             WITHDRAW ->
-                transactionApplicationService.withdraw(accountId, transaction.amount)
+                transactionApplicationService.withdraw(accountId, operation.amount)
             DEPOSIT ->
-                transactionApplicationService.deposit(accountId, transaction.amount)
+                transactionApplicationService.deposit(accountId, operation.amount)
             TRANSFER ->
-                transactionApplicationService.transfer(accountId, transaction.targetAccountId!!, transaction.amount)
+                transactionApplicationService.transfer(accountId, operation.targetAccountId!!, operation.amount)
         }
 
         return ResponseEntity(transaction, HttpStatus.CREATED)

@@ -28,6 +28,8 @@ class SecurityConfig(
     override fun configure(http: HttpSecurity) {
         http.authorizeRequests()
             .antMatchers("/accounts").permitAll()
+            .antMatchers("/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/swagger-ui/**")
+                .permitAll()
             .anyRequest().authenticated()
             .and()
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
