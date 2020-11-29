@@ -2,6 +2,9 @@
 
 A digital bank developed in Kotlin + Spring Boot
 
+## Domain Model
+![domain](./docs/zbank_domain.png "zbank domain model")
+
 ## Requirements
 
 * Intellij IDEA
@@ -18,7 +21,7 @@ $ docker-compose up -d
 * Access your API at http://localhost:8080
 * You could find a Swagger with all the endpoints on http://localhost:8080/swagger-ui/
  
- # Developing
+## Developing
  
  * Start the database containers, running on the project path (it could take a few minutes to build)
  
@@ -31,9 +34,13 @@ $ docker-compose up -d
 * Select BankAccountApplicationKt on `Edit run/debug configurations` dialog
 * Run the application
 
-# Testing
+## Testing
 
 * Right-click at the root project tree and select `Run Tests in account`
+
+## Postman Collection
+
+You could find examples of requests here:
 
 ### Attention
 
