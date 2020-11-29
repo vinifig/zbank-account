@@ -41,9 +41,8 @@ $ docker-compose up -d
 ## Postman Collection
 
 You could find examples of requests here:
+https://www.getpostman.com/collections/4cf8c62f9dda6a13a2a4
 
 ### Attention
 
 All the api requests except for `POST /account` must be authenticated with `Basic(accountId:cpf)`  
-
-
