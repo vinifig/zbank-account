@@ -1,7 +1,9 @@
 package com.zbank.bankaccount.port.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.zbank.bankaccount.AbstractBaseTest
+import com.zbank.bankaccount.AbstractControllerTest
+import com.zbank.bankaccount.LONG_MOCK_USER
+import com.zbank.bankaccount.MOCK_USER
 import com.zbank.bankaccount.application.AccountApplicationService
 import com.zbank.bankaccount.application.command.CreateAccountCommand
 import com.zbank.bankaccount.application.data.AccountBalanceData
@@ -9,6 +11,8 @@ import com.zbank.bankaccount.application.data.AccountData
 import com.zbank.bankaccount.domain.model.account.Account
 import com.zbank.bankaccount.domain.model.account.AccountAlreadyExistsException
 import com.zbank.bankaccount.domain.model.account.AccountNotFoundException
+import com.zbank.bankaccount.port.authentication.AccountAuthenticationProvider
+import com.zbank.bankaccount.port.authentication.USER_ROLE
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
@@ -18,16 +22,19 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @WebMvcTest(AccountController::class)
 class AccountControllerTest(
     @Autowired val mockMvc: MockMvc,
-    @Autowired val objectMapper: ObjectMapper
-) : AbstractBaseTest() {
+    @Autowired val objectMapper: ObjectMapper,
+    @Autowired val accountAuthenticationProviderMock: AccountAuthenticationProvider
+) : AbstractControllerTest() {
 
     @MockBean
     private lateinit var accountApplicationServiceMock: AccountApplicationService
@@ -67,8 +74,9 @@ class AccountControllerTest(
     }
 
     @Test
+    @WithMockUser(username = MOCK_USER)
     fun `get balance must return ok if the id exists`() {
-        val account = buildFixture<AccountBalanceData>("default")
+        val account = buildFixture<AccountBalanceData>("default").copy(id = LONG_MOCK_USER)
 
         `when`(accountApplicationServiceMock.getBalance(account.id)).thenReturn(account)
 
@@ -79,8 +87,9 @@ class AccountControllerTest(
     }
 
     @Test
+    @WithMockUser(username = MOCK_USER)
     fun `get balance must return not found if the id not exists`() {
-        val account = buildFixture<Account>("default")
+        val account = buildFixture<Account>("default").copy(id = LONG_MOCK_USER)
         val accountId = account.id ?: fail("must have a account id")
         val exception = AccountNotFoundException(accountId)
 
@@ -90,5 +99,14 @@ class AccountControllerTest(
             .andExpect(status().isNotFound)
             .andExpect(jsonPath("$.status", equalTo(HttpStatus.NOT_FOUND.value())))
             .andExpect(jsonPath("$.message", equalTo(exception.message)))
+    }
+
+    @Test
+    @WithMockUser(username = MOCK_USER, roles = [USER_ROLE])
+    fun `get balance must return forbidden if provide other id than the authenticated`() {
+        val accountId = LONG_MOCK_USER + 1
+
+        mockMvc.perform(get("/accounts/$accountId/balance"))
+            .andExpect(status().isForbidden)
     }
 }

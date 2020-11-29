@@ -1,4 +1,4 @@
-package com.zbank.bankaccount.port.controller.model
+package com.zbank.bankaccount.port.model
 
 import com.zbank.bankaccount.domain.model.transaction.TransactionKind
 

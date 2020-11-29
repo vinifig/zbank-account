@@ -40,4 +40,12 @@ class AccountApplicationService(
             .orElseThrow { AccountNotFoundException(accountId) }
     }
 
+    @Transactional(readOnly = true)
+    fun getAccount(accountId: Long): Account {
+        logger.info("getting account for $accountId")
+
+        return accountRepository.findById(accountId)
+            .orElseThrow { AccountNotFoundException(accountId) }
+    }
+
 }

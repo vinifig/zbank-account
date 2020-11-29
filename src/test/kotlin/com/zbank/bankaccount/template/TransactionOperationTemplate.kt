@@ -4,7 +4,7 @@ import br.com.six2six.fixturefactory.Fixture
 import br.com.six2six.fixturefactory.Rule
 import br.com.six2six.fixturefactory.loader.TemplateLoader
 import com.zbank.bankaccount.domain.model.transaction.TransactionKind
-import com.zbank.bankaccount.port.controller.model.TransactionOperation
+import com.zbank.bankaccount.port.model.TransactionOperation
 
 class TransactionOperationTemplate : TemplateLoader {
 

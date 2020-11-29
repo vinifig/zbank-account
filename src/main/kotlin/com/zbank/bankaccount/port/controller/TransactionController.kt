@@ -4,12 +4,14 @@ import com.zbank.bankaccount.application.TransactionApplicationService
 import com.zbank.bankaccount.application.data.AccountStatementData
 import com.zbank.bankaccount.domain.model.transaction.Transaction
 import com.zbank.bankaccount.domain.model.transaction.TransactionKind.*
-import com.zbank.bankaccount.port.controller.model.TransactionOperation
+import com.zbank.bankaccount.port.authentication.ACCOUNT_ID_AUTHORIZATION_EXPRESSION
+import com.zbank.bankaccount.port.model.TransactionOperation
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Page.empty
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 
@@ -20,6 +22,7 @@ class TransactionController(
 ) {
 
     @PostMapping
+    @PreAuthorize(ACCOUNT_ID_AUTHORIZATION_EXPRESSION)
     fun executeTransaction(
         @PathVariable accountId: Long,
         @RequestBody transaction: TransactionOperation
@@ -38,6 +41,7 @@ class TransactionController(
 
     // TODO: investigate why spring controller is returning route not found 404 for pages when not encapsulated by ResponseEntity
     @GetMapping
+    @PreAuthorize(ACCOUNT_ID_AUTHORIZATION_EXPRESSION)
     fun getAccountStatement(
         @PathVariable accountId: Long,
         pageable: Pageable
